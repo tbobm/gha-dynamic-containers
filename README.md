@@ -96,6 +96,44 @@ following container images when running against the `main` branch:
 - `ghcr.io/tbobm/gha-dynamic-containers:demo-app1-main`
 - `ghcr.io/tbobm/gha-dynamic-containers:demo-app2-main`
 
+## Matrix injection
+
+Github Actions Workflow can be dynamically adapted using the `fromJson`
+function that will inject the string directly in the Workflow.
+
+This is configured in the `build-containers` attribute, as shown below:
+```yaml
+  build-containers:
+    runs-on: "ubuntu-latest"
+    name: "Build and push OCIs"
+    needs:
+      - matrix
+    strategy:
+      matrix: ${{fromJson(needs.matrix.outputs.matrix)}}
+```
+
+Using the `demo` example, we will end up with 2 `build-containers` jobs:
+- `./demo/app1`
+- `./demo/app2`
+
+Both of them resulting in a different images based on the OCI tag.
+
+Once rendered using the dynamic matrix, the Workflow looks like the following:
+```yaml
+  build-containers:
+    runs-on: "ubuntu-latest"
+    name: "Build and push OCIs"
+    needs:
+      - matrix
+    strategy:
+      matrix:
+        target:
+          - src: ./demo/app2
+            name: ./demo/app2/Dockerfile
+          - src: ./demo/app1
+            name: ./demo/app1/Dockerfile
+```
+
 ## Sources
 
 - [Dynamic build matrix in GitHub Actions](https://www.cynkra.com/blog/2020-12-23-dynamic-gha/)
