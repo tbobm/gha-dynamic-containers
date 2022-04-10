@@ -1,5 +1,7 @@
 # Github Actions dynamic containers
 
+[![Build Containers](https://github.com/tbobm/gha-dynamic-containers/actions/workflows/main.yaml/badge.svg)](https://github.com/tbobm/gha-dynamic-containers/actions/workflows/main.yaml)
+
 Dynamically build containers in a monolithic Github repository and upload them
 to [ghcr][ghcr].
 
