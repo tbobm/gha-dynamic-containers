@@ -21,6 +21,9 @@ jobs:
       - name: "Checkout the code"
         uses: "actions/checkout@v3"
 
+      - name: GitHub Slug Action
+        uses: rlespinasse/github-slug-action@4.2.3
+
       - name: "Set up Docker Buildx"
         uses: docker/setup-buildx-action@v1
 
@@ -43,4 +46,6 @@ jobs:
         with:
           context: "${{ matrix.target.src }}"
           push: true
-          tags: "ghcr.io/tbobm/gha-dynamic-containers:${{ steps.slugify-src.outputs.target-slug }}-latest"
+          tags: |
+            "ghcr.io/tbobm/gha-dynamic-containers:${{ steps.slugify-src.outputs.target-slug }}-latest"
+            "ghcr.io/tbobm/gha-dynamic-containers:${{ steps.slugify-src.outputs.target-slug }}-${{ env.GITHUB_REF_SLUG }}"
