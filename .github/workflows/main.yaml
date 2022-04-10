@@ -80,5 +80,5 @@ jobs:
           context: "${{ matrix.target.src }}"
           push: true
           tags: |
-            "ghcr.io/tbobm/gha-dynamic-containers:${{ steps.slugify-src.outputs.target-slug }}-latest"
-            "ghcr.io/tbobm/gha-dynamic-containers:${{ steps.slugify-src.outputs.target-slug }}-${{ env.GITHUB_REF_SLUG }}"
+            "ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ steps.slugify-src.outputs.target-slug }}-latest"
+            "ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ steps.slugify-src.outputs.target-slug }}-${{ env.GITHUB_REF_SLUG }}"
