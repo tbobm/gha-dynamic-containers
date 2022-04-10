@@ -31,9 +31,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: "Slugify path to create container tag"
+        id: slugify-src
+        env:
+          TARGET_SRC: ${{ matrix.target.src }}
+        run: |
+          echo "::set-output name=target-slug::$(echo $TARGET_SRC | iconv -t ascii//TRANSLIT | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z)"
+
       - name: "Build container ${{ matrix.target.name }}"
         uses: docker/build-push-action@v2
         with:
           context: "${{ matrix.target.src }}"
           push: true
-          tags: "ghcr.io/tbobm/gha-dynamic-containers:${{ matrix.target.name }}-latest"
+          tags: "ghcr.io/tbobm/gha-dynamic-containers:${{ steps.slugify-src.outputs.target-slug }}-latest"
