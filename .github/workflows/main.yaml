@@ -7,21 +7,54 @@ name: "Build Containers"
     branches: ["main"]
 
 jobs:
-  build-containers:
+  matrix:
     runs-on: "ubuntu-latest"
-    name: "Build and push container images"
-    strategy:
-      matrix:
-        target:
-          - src: "demo/app1"
-            name: "sample-application"
-          - src: "demo/app2"
-            name: "demo-application"
+    name: "Generate the matrix"
+    outputs:
+      matrix: ${{ steps.create-matrix.outputs.matrix }}
     steps:
       - name: "Checkout the code"
         uses: "actions/checkout@v3"
 
-      - name: GitHub Slug Action
+      - name: "Run generate_matrix.sh"
+        id: create-matrix
+        run: |
+          yq --version
+          matrix=$(./generate_matrix.sh | yq -I=0 -o=json)
+          echo matrix="$matrix"
+          echo "::set-output name=matrix::$(./generate_matrix.sh | yq -I=0 -o=json)"
+      - name: "Display matrix"
+        run: echo '${{ steps.create-matrix.outputs.matrix }}'
+
+  check-matrix:
+    runs-on: ubuntu-latest
+    name: "Validate and display matrix"
+    needs: matrix
+    steps:
+      - name: Install json2yaml
+        run: |
+          sudo npm install -g json2yaml
+
+      - name: Check matrix definition
+        run: |
+          matrix='${{ needs.matrix.outputs.matrix }}'
+          echo $matrix
+          echo $matrix | jq .
+          echo $matrix | json2yaml
+
+
+  build-containers:
+    runs-on: "ubuntu-latest"
+    name: "Build and push OCIs"
+    needs:
+      - matrix
+    strategy:
+      matrix: ${{fromJson(needs.matrix.outputs.matrix)}}
+    steps:
+      - name: "Checkout the code"
+        uses: "actions/checkout@v3"
+
+      - name: "GitHub Slug Action"
         uses: rlespinasse/github-slug-action@4.2.3
 
       - name: "Set up Docker Buildx"
