@@ -35,6 +35,67 @@ Github Reference slug is used as the suffix (i.e.: branch, tag)
 
 [gh-matrix]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
 
+### Matrix definition
+
+_Note: this can be adapted by modifying the `generate_matrix.sh` script in the
+top-level directory of the repository._
+
+Each directory containing a `Dockerfile` is used as a `target`.
+
+Considering that we have 2 targets structured as the following:
+```console
+$ tree demo/
+demo/
+├── app1
+│   └── Dockerfile
+└── app2
+    └── Dockerfile
+```
+
+We will end up with a matrix with a structure matching the one below:
+```yaml
+target:
+  - src: ./demo/app2
+    name: ./demo/app2/Dockerfile
+  - src: ./demo/app1
+    name: ./demo/app1/Dockerfile
+```
+
+It is then exposed as an output in a single-line JSON using [`yq`][yq].
+
+Pretty printed JSON:
+```json
+{
+  "target": [
+    {
+      "src": "./demo/app2",
+      "name": "./demo/app2/Dockerfile"
+    },
+    {
+      "src": "./demo/app1",
+      "name": "./demo/app1/Dockerfile"
+    }
+  ]
+}
+```
+
+Single-line JSON:
+```json
+{"target":[{"src":"./demo/app2","name":"./demo/app2/Dockerfile"},{"src":"./demo/app1","name":"./demo/app1/Dockerfile"}]}
+```
+
+[yq]: https://mikefarah.gitbook.io/yq/
+
+### Example
+
+This repository includes a `./demo` directory that acts as a dummy
+implementation of this Workflow.
+
+Once rendered, the Github Actions Workflow "Build Containers" creates the
+following container images when running against the `main` branch:
+- `ghcr.io/tbobm/gha-dynamic-containers:demo-app1-main`
+- `ghcr.io/tbobm/gha-dynamic-containers:demo-app2-main`
+
 ## Sources
 
 - [Dynamic build matrix in GitHub Actions](https://www.cynkra.com/blog/2020-12-23-dynamic-gha/)
