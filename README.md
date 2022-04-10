@@ -134,6 +134,25 @@ Once rendered using the dynamic matrix, the Workflow looks like the following:
             name: ./demo/app1/Dockerfile
 ```
 
+## How to use this repository template ?
+
+Simply create your new repository using the `Use this template` button
+available in this repository.
+
+Everything is pretty much bootstrapped to work out of the box thanks to
+the [github-slug-action][gh-slug-action] that injects the current repository
+name as the registry entry in [ghcr][ghcr].
+
+[gh-slug-action]: https://github.com/marketplace/actions/github-slug-action#overview
+
+For more information see [Creating a Repository from a Template][gh-template]
+in the Github documentation.
+
+[gh-template]: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template
+
+Once done, you can create your own directory structure that will be easy
+to use in your existing workflow.
+
 ## Sources
 
 - [Dynamic build matrix in GitHub Actions](https://www.cynkra.com/blog/2020-12-23-dynamic-gha/)
